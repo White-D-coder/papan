@@ -5,6 +5,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { Sparkles, ArrowUpRight, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EncryptedText } from "@/components/ui/encrypted-text";
+
 
 interface VortexPhoto {
   id: string;
@@ -148,7 +150,12 @@ export const BackgroundLines = ({ className }: { className?: string }) => {
           style={{ scale: textScale }}
           className="text-6xl sm:text-8xl md:text-9xl font-bold tracking-tighter uppercase leading-[0.9] text-[#F4F1EA] drop-shadow-[0_10px_25px_rgba(225,29,72,0.6)] select-none"
         >
-          {activeItem.dest}
+          <EncryptedText
+            text={activeItem.dest}
+            encryptedClassName="text-[#e22222]/60"
+            revealedClassName="text-[#F4F1EA]"
+            revealDelayMs={40}
+          />
         </motion.h1>
 
         <motion.p 
