@@ -70,7 +70,7 @@ export default function InquiryModal({ isOpen, onClose, defaultDestination = 'Ja
                 <span>CUSTOM ITINERARY BUILDER</span>
               </div>
               <h3 className="font-serif-editorial italic text-3xl sm:text-4xl font-normal leading-tight">
-                Plan Your Trip with Sunidhi &amp; Shubham
+                Plan Your Trip with Purva
               </h3>
               <p className="text-stone-600 text-xs sm:text-sm mt-1 mb-6">
                 Tell us where you want to travel, and we’ll help design an authentic day-by-day route within your budget.
@@ -172,7 +172,7 @@ export default function InquiryModal({ isOpen, onClose, defaultDestination = 'Ja
               </h3>
 
               <p className="text-stone-600 text-sm max-w-sm">
-                Thank you <strong className="text-stone-900">{name}</strong>! Sunidhi &amp; Shubham will review your inquiry for <strong className="text-stone-900">{destination}</strong> and reply back via email within 24 hours.
+                Thank you <strong className="text-stone-900">{name}</strong>! Purva will review your inquiry for <strong className="text-stone-900">{destination}</strong> and reply back via email within 24 hours.
               </p>
 
               <button

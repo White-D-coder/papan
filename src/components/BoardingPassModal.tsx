@@ -1,7 +1,17 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plane, Calendar, DollarSign, MapPin, Film, CheckCircle2, Clock } from 'lucide-react';
+import { 
+  X, 
+  Phone, 
+  Globe, 
+  Mail, 
+  Sparkles, 
+  Camera, 
+  Share2, 
+  Send, 
+  MessageCircle 
+} from 'lucide-react';
 import Image from 'next/image';
 
 export interface DestinationPass {
@@ -41,143 +51,135 @@ export default function BoardingPassModal({ pass, onClose, onPlanTrip }: Boardin
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-stone-900/60 backdrop-blur-md"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md"
         />
 
-        {/* Modal Ticket Window */}
+        {/* Modal Outer Container */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-3xl bg-[#FAF9F6] rounded-3xl overflow-hidden shadow-2xl z-10 border border-stone-200"
+          className="relative w-full max-w-2xl bg-[#0d0d0d] text-white rounded-[32px] overflow-hidden shadow-2xl z-10 border border-stone-800 p-4 sm:p-6"
         >
-          {/* Header Image Banner */}
-          <div className="relative h-64 sm:h-72 w-full overflow-hidden">
+          {/* Top Header Navigation */}
+          <div className="flex items-center justify-between pb-3 px-2 border-b border-stone-800/60 mb-4">
+            <div className="flex-1 text-center font-mono text-xs tracking-[0.3em] uppercase text-stone-300 font-medium">
+              FLIGHTS &nbsp;•&nbsp; COMPARE &nbsp;•&nbsp; HOTELS
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Top Image Banner */}
+          <div className="relative h-64 sm:h-80 w-full rounded-t-[28px] overflow-hidden">
             <Image
               src={pass.image}
               alt={pass.name}
               fill
               className="object-cover"
+              priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/30 to-transparent" />
+          </div>
 
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/70 transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Floating Title & Route */}
-            <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white">
-              <div>
-                <span className="font-mono-code text-xs tracking-widest text-amber-300 font-semibold uppercase">
-                  {pass.region} • BOARDING PASS #{pass.id.toUpperCase()}
-                </span>
-                <h2 className="font-serif-editorial italic text-4xl sm:text-5xl font-normal leading-tight">
-                  {pass.name}
-                </h2>
-              </div>
-
-              {/* Route Badge */}
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20">
-                <div className="text-center">
-                  <div className="font-mono-code font-bold text-lg">{pass.routeFrom.code}</div>
-                  <div className="text-[9px] font-mono-code text-stone-300">{pass.routeFrom.city}</div>
+          {/* Main White Content Card */}
+          <div className="bg-[#f2f2f2] text-stone-900 rounded-b-[28px] rounded-tl-[40px] p-6 sm:p-8 -mt-2 relative z-10 flex flex-col justify-between">
+            <div className="grid grid-cols-12 gap-6">
+              
+              {/* Left Column: Details */}
+              <div className="col-span-8 flex flex-col justify-between space-y-6">
+                <div>
+                  <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-black mb-3">
+                    {pass.name}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-medium">
+                    {pass.itinerarySummary || "Discover the perfect blend of tradition and innovation in a land like no other."}
+                  </p>
                 </div>
-                <Plane className="w-4 h-4 text-amber-400 rotate-90 sm:rotate-0" />
-                <div className="text-center">
-                  <div className="font-mono-code font-bold text-lg">{pass.routeTo.code}</div>
-                  <div className="text-[9px] font-mono-code text-stone-300">{pass.routeTo.city}</div>
+
+                <hr className="border-stone-300" />
+
+                <div>
+                  <h3 className="font-extrabold text-sm uppercase tracking-wider text-black mb-1">
+                    VISIT {pass.name.toUpperCase()}
+                  </h3>
+                  <p className="text-xs font-bold text-stone-800 mb-2">
+                    Timeless. Unforgettable. Yours to explore.
+                  </p>
+                  <p className="text-xs text-stone-500 leading-relaxed">
+                    From ancient temples to modern skyscrapers, discover the beauty, culture, and flavors that make {pass.name} unforgettable.
+                  </p>
                 </div>
               </div>
+
+              {/* Right Column: Vertical Typography Accent */}
+              <div className="col-span-4 border-l border-stone-300 pl-4 flex flex-col items-center justify-between">
+                {/* Sparkle Icon */}
+                <Sparkles className="w-6 h-6 text-black fill-black" />
+
+                {/* Vertical Japanese/Category Text */}
+                <div className="flex items-center gap-4 my-auto py-4">
+                  <span className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-black [writing-mode:vertical-rl] rotate-180">
+                    City Tour
+                  </span>
+                  <span className="text-xs font-bold text-stone-500 [writing-mode:vertical-rl] rotate-180 tracking-widest">
+                    市内ツアー
+                  </span>
+                  <div className="flex flex-col gap-1 items-center">
+                    <span className="w-1.5 h-1.5 bg-black rounded-full" />
+                    <span className="w-1.5 h-1.5 bg-black rounded-full" />
+                    <span className="w-1.5 h-1.5 bg-black rounded-full" />
+                  </div>
+                  <span className="text-xs text-stone-400 [writing-mode:vertical-rl] rotate-180 tracking-wider">
+                    日本を訪問
+                  </span>
+                </div>
+
+                {/* Social Icons */}
+                <div className="flex items-center gap-2 text-stone-800">
+                  <Camera className="w-4 h-4 cursor-pointer hover:opacity-75 transition-opacity" />
+                  <Share2 className="w-4 h-4 cursor-pointer hover:opacity-75 transition-opacity" />
+                  <Send className="w-4 h-4 cursor-pointer hover:opacity-75 transition-opacity" />
+                  <MessageCircle className="w-4 h-4 cursor-pointer hover:opacity-75 transition-opacity" />
+                </div>
+              </div>
+            </div>
+
+            {/* Inner Card Footer */}
+            <div className="mt-8 pt-4 border-t border-stone-300 flex items-center justify-between text-xs font-semibold text-stone-800">
+              <span className="font-bold text-stone-900">2026</span>
+              <button 
+                onClick={() => {
+                  onClose();
+                  onPlanTrip(pass.name);
+                }}
+                className="hover:underline tracking-wide font-bold"
+              >
+                Let's Go. Explore {pass.name}.
+              </button>
+              <span className="text-stone-500 font-mono">travoaid.com</span>
             </div>
           </div>
 
-          {/* Ticket Details Body */}
-          <div className="p-6 sm:p-8 space-y-6">
-            {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-stone-100 border border-stone-200/80">
-              <div>
-                <span className="font-mono-code text-[10px] uppercase text-stone-500 font-semibold flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-stone-700" /> Travel Date
-                </span>
-                <p className="font-mono-code text-sm font-bold text-stone-900 mt-1">{pass.date}</p>
-              </div>
-
-              <div>
-                <span className="font-mono-code text-[10px] uppercase text-stone-500 font-semibold flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-stone-700" /> Duration
-                </span>
-                <p className="font-mono-code text-sm font-bold text-stone-900 mt-1">{pass.duration}</p>
-              </div>
-
-              <div>
-                <span className="font-mono-code text-[10px] uppercase text-stone-500 font-semibold flex items-center gap-1">
-                  <DollarSign className="w-3 h-3 text-stone-700" /> Est. Budget
-                </span>
-                <p className="font-mono-code text-sm font-bold text-emerald-700 mt-1">{pass.estimatedBudget}</p>
-              </div>
-
-              <div>
-                <span className="font-mono-code text-[10px] uppercase text-stone-500 font-semibold flex items-center gap-1">
-                  Gate &amp; Seat
-                </span>
-                <p className="font-mono-code text-sm font-bold text-stone-900 mt-1">
-                  GATE {pass.gate} / {pass.seat}
-                </p>
-              </div>
+          {/* Modal Bottom Footer Bar */}
+          <div className="mt-4 pt-2 flex flex-wrap items-center justify-center gap-6 text-[11px] text-stone-400 font-mono">
+            <div className="flex items-center gap-1.5">
+              <Phone className="w-3.5 h-3.5" />
+              <span>+1 (844) 551-9200</span>
             </div>
-
-            {/* Overview & Highlights */}
-            <div>
-              <h3 className="font-bold text-base text-stone-900 mb-2">Itinerary Overview</h3>
-              <p className="text-stone-600 text-sm leading-relaxed">{pass.itinerarySummary}</p>
+            <div className="hidden sm:block text-stone-700">|</div>
+            <div className="flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5" />
+              <span>travoaid.com</span>
             </div>
-
-            {/* Key Highlights list */}
-            <div>
-              <h3 className="font-bold text-base text-stone-900 mb-3">Featured Highlights</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {pass.highlights.map((highlight, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs font-semibold"
-                  >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>{highlight}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Action Bar */}
-            <div className="pt-4 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-stone-500 font-mono-code text-xs">
-                <Film className="w-4 h-4 text-stone-700" />
-                <span>Film Guide Available in 4K UHD</span>
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <button
-                  onClick={onClose}
-                  className="px-5 py-2.5 rounded-full border border-stone-300 text-stone-700 font-bold text-xs uppercase tracking-wider hover:bg-stone-100 transition-colors w-1/2 sm:w-auto"
-                >
-                  Close
-                </button>
-
-                <button
-                  onClick={() => {
-                    onClose();
-                    onPlanTrip(pass.name);
-                  }}
-                  className="px-6 py-2.5 rounded-full bg-[#121316] text-[#FAF9F6] font-bold text-xs uppercase tracking-widest hover:bg-stone-800 transition-all shadow-md hover:scale-105 active:scale-95 w-1/2 sm:w-auto"
-                >
-                  Get Full Itinerary
-                </button>
-              </div>
+            <div className="hidden sm:block text-stone-700">|</div>
+            <div className="flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5" />
+              <span>travoaid@gmail.com</span>
             </div>
           </div>
         </motion.div>

@@ -32,7 +32,7 @@ export default function Preloader() {
               {/* Radial gradient background accent */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-400/40 via-emerald-500/20 to-blue-600/30" />
               <span className="relative z-10 font-black text-4xl tracking-tighter text-[#FAF9F6]">
-                SO
+                RK
               </span>
             </motion.div>
 
@@ -43,7 +43,7 @@ export default function Preloader() {
               className="flex items-center gap-2"
             >
               <span className="font-mono-code text-xs tracking-[0.3em] font-semibold text-[#858997] uppercase">
-                SOSUNIDHI
+                RYOKO
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
             </motion.div>

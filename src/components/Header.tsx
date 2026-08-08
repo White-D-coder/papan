@@ -49,15 +49,12 @@ export default function Header({ onOpenInquiry }: HeaderProps) {
           <div className="relative w-9 h-9 rounded-xl bg-[#121316] overflow-hidden flex items-center justify-center shadow-md transition-transform group-hover:scale-105">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-400 via-emerald-500 to-blue-600 opacity-80 group-hover:opacity-100 transition-opacity" />
             <span className="relative z-10 font-black text-sm text-[#FAF9F6] tracking-tighter">
-              SO
+              RK
             </span>
           </div>
           <div className="flex flex-col">
             <span className="font-extrabold text-xs tracking-[0.25em] text-[#121316] uppercase">
-              SOSUNIDHI
-            </span>
-            <span className="font-mono-code text-[9px] tracking-widest text-stone-500 uppercase -mt-0.5">
-              TRAVEL, SOLVED
+              RYOKO
             </span>
           </div>
         </a>

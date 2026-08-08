@@ -1,15 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plane, Compass, ArrowUpRight, Sparkles } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from 'framer-motion';
+import { Compass, Sparkles, Camera, Share2, Send, MessageCircle, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import BoardingPassModal, { DestinationPass } from './BoardingPassModal';
 
-const destinationsData: DestinationPass[] = [
+export interface PosterDestinationPass extends DestinationPass {
+  countryTitle: string;
+  categoryTitle: string;
+  nativeTitle: string;
+  nativeAction: string;
+}
+
+const destinationsData: PosterDestinationPass[] = [
   {
     id: 'jp-2026',
     name: 'Japan Autumn & Cherry Blossom',
+    countryTitle: 'Japan',
+    categoryTitle: 'City Tour',
+    nativeTitle: '市内ツアー',
+    nativeAction: '日本を訪問',
     region: 'East Asia',
     status: 'filmed',
     statusLabel: 'FILMED & RELEASED',
@@ -30,11 +41,15 @@ const destinationsData: DestinationPass[] = [
       'Bullet Train JR Pass Hack Guide',
     ],
     itinerarySummary:
-      'Complete 12-day breakdown from Osaka street food to Tokyo neon lights. Includes exact train routing, hotel budget picks under $100/night, and daily meal cost averages.',
+      'Discover the perfect blend of tradition and innovation in a land like no other. Complete 12-day breakdown from Osaka street food to Tokyo neon lights.',
   },
   {
     id: 'ch-2026',
     name: 'Swiss Alps & Panoramic Express',
+    countryTitle: 'Switzerland',
+    categoryTitle: 'Alps Express',
+    nativeTitle: 'アルプスツアー',
+    nativeAction: 'スイスを訪問',
     region: 'Central Europe',
     status: 'boarding',
     statusLabel: 'BOARDING SOON',
@@ -55,11 +70,15 @@ const destinationsData: DestinationPass[] = [
       'Swiss Half Fare Pass Optimization',
     ],
     itinerarySummary:
-      'How to travel Switzerland without breaking the bank. Master the Swiss Rail Pass, find budget grocery meals, and hike free scenic trails in Jungfrau region.',
+      'Experience majestic alpine peaks, turquoise glacial lakes, and legendary mountain railways on a journey through Europe’s roof.',
   },
   {
     id: 'kr-2026',
     name: 'South Korea & Jeju Island',
+    countryTitle: 'South Korea',
+    categoryTitle: 'Coastal Trail',
+    nativeTitle: '済州島ツアー',
+    nativeAction: '韓国を訪問',
     region: 'East Asia',
     status: 'boarding',
     statusLabel: 'BOARDING SOON',
@@ -80,11 +99,15 @@ const destinationsData: DestinationPass[] = [
       'T-Money Pass & Naver Map Survival Guide',
     ],
     itinerarySummary:
-      'Immerse in K-culture, street food paradises, and coastal wonders. Includes local subway tricks and cafes you won’t find in mainstream guidebooks.',
+      'Immerse in K-culture, ancient hanok villages, street food paradises, and Jeju’s dramatic volcanic ocean cliffs.',
   },
   {
     id: 'at-2026',
     name: 'Austria & Bavaria Germany',
+    countryTitle: 'Austria',
+    categoryTitle: 'Lakeside Tour',
+    nativeTitle: '湖畔ツアー',
+    nativeAction: 'オーストリア訪問',
     region: 'Central Europe',
     status: 'scheduled',
     statusLabel: 'SCHEDULED FLIGHT',
@@ -98,246 +121,235 @@ const destinationsData: DestinationPass[] = [
     estimatedBudget: '$1,950 / PERSON',
     image: '/images/austria.jpg',
     highlights: [
-      'Hallstatt Lakeside Chalets & Salt Mine',
-      'Salzburg Sound of Music Historic Old Town',
-      'Neuschwanstein Fairytale Castle Bavaria',
-      'Vienna Imperial Palaces & Coffee Culture',
-      'European Rail Pass Country Hopper Guide',
+      'Hallstatt Lakeside UNESCO Village Walk',
+      'Salzburg Sound of Music & Fortress Hill',
+      'Vienna Imperial Palaces & Coffeehouse Culture',
+      'Bavarian Neuschwanstein Castle Day Trip',
+      'Austrian Alpine Railway Scenic Passes',
     ],
     itinerarySummary:
-      'Explore postcard-perfect alpine villages, historic palaces, and cozy Christmas markets along the Austrian-Bavarian border.',
+      'Step into a real-life fairytale wanderland of snow-dusted alpine villages, Baroque concert halls, and pristine lakes.',
   },
 ];
 
 interface DestinationsProps {
-  onPlanTrip: (destinationName?: string) => void;
+  onPlanTrip?: (destinationName: string) => void;
 }
 
-export default function Destinations({ onPlanTrip }: DestinationsProps) {
-  const [filter, setFilter] = useState<'all' | 'filmed' | 'boarding' | 'scheduled'>('all');
-  const [selectedPass, setSelectedPass] = useState<DestinationPass | null>(null);
+// Sub-component for High Performance Scroll Animation (Zero Lag & Full Visibility)
+function AnimatedCard({
+  pass,
+  index,
+  scrollYProgress,
+  onSelect,
+}: {
+  pass: PosterDestinationPass;
+  index: number;
+  scrollYProgress: MotionValue<number>;
+  onSelect: (pass: PosterDestinationPass) => void;
+}) {
+  const start = index * 0.08;
+  const end = start + 0.32;
 
-  const filteredData = destinationsData.filter((item) => {
-    if (filter === 'all') return true;
-    return item.status === filter;
-  });
+  const y = useTransform(scrollYProgress, [start, end], [50, 0]);
+  const opacity = useTransform(scrollYProgress, [start, end], [0.2, 1]);
+  const scale = useTransform(scrollYProgress, [start, end], [0.95, 1]);
 
   return (
-    <section id="destinations" className="relative w-full py-28 px-4 bg-[#F5F3EF] text-[#121316]">
-      {/* Background Subtle Grid Texture */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#121316_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+    <motion.div
+      layout
+      style={{ y, opacity, scale }}
+      onClick={() => onSelect(pass)}
+      className="will-change-transform transform-gpu group relative cursor-pointer rounded-[28px] overflow-hidden bg-white text-stone-900 border border-stone-200/80 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full"
+    >
+      {/* Top Cover Image Container */}
+      <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-stone-900">
+        <Image
+          src={pass.image}
+          alt={pass.name}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 25vw"
+          priority={index < 2}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-800 text-xs font-mono-code font-bold uppercase tracking-widest mb-3">
-              <Compass className="w-3.5 h-3.5" /> BOARDING PASSES &amp; FILMS
-            </div>
-            <h2 className="font-serif-editorial italic text-4xl sm:text-6xl font-normal tracking-tight text-stone-900 leading-tight">
-              Where Are We Flying Next?
-            </h2>
-            <p className="text-stone-600 text-sm sm:text-base max-w-xl mt-2">
-              Select a travel pass to unlock full day-by-day itineraries, exact hotel budgets, secret photography spots, and video guides.
-            </p>
-          </div>
-
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-full text-xs font-bold font-mono-code uppercase tracking-wider transition-all whitespace-nowrap ${
-                filter === 'all'
-                  ? 'bg-stone-900 text-white shadow-md'
-                  : 'bg-white text-stone-600 hover:bg-stone-200 border border-stone-300'
-              }`}
-            >
-              All Passes
-            </button>
-            <button
-              onClick={() => setFilter('filmed')}
-              className={`px-4 py-2 rounded-full text-xs font-bold font-mono-code uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                filter === 'filmed'
-                  ? 'bg-emerald-700 text-white shadow-md'
-                  : 'bg-white text-emerald-800 hover:bg-emerald-50 border border-emerald-300/80'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Filmed
-            </button>
-            <button
-              onClick={() => setFilter('boarding')}
-              className={`px-4 py-2 rounded-full text-xs font-bold font-mono-code uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                filter === 'boarding'
-                  ? 'bg-amber-600 text-white shadow-md'
-                  : 'bg-white text-amber-800 hover:bg-amber-50 border border-amber-300/80'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              Boarding Soon
-            </button>
-          </div>
+        {/* Top Floating Badges */}
+        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
+          <span className="font-sans text-xs font-medium tracking-wider text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+            {pass.date}
+          </span>
+          <span
+            className={`px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wider backdrop-blur-md shadow-sm border ${
+              pass.status === 'filmed'
+                ? 'bg-emerald-600/90 text-white border-emerald-400/40'
+                : pass.status === 'boarding'
+                ? 'bg-amber-500/90 text-stone-950 border-amber-300'
+                : 'bg-stone-800/80 text-stone-200 border-stone-600'
+            }`}
+          >
+            ● {pass.status.toUpperCase()}
+          </span>
         </div>
+      </div>
 
-        {/* Boarding Passes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          <AnimatePresence mode="popLayout">
-            {filteredData.map((pass) => (
-              <motion.div
-                key={pass.id}
-                layout
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4 }}
-                onClick={() => setSelectedPass(pass)}
-                className="group relative cursor-pointer flex flex-col bg-white rounded-3xl overflow-hidden shadow-lg border border-stone-200/90 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
-              >
-                {/* Photo Top Section */}
-                <div className="relative h-56 w-full overflow-hidden bg-stone-900">
-                  <Image
-                    src={pass.image}
-                    alt={pass.name}
-                    fill
-                    className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:filter-none filter grayscale-[40%]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                  {/* Date Tag */}
-                  <span className="absolute top-3.5 left-4 font-mono-code text-[10px] font-semibold text-white/90 tracking-widest bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20">
-                    {pass.date}
-                  </span>
-
-                  {/* Status Pill */}
-                  <div className="absolute top-3.5 right-4">
-                    {pass.status === 'filmed' && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/90 text-white font-mono-code text-[10px] font-bold tracking-wider backdrop-blur-md shadow-sm border border-emerald-400/40">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping" />
-                        FILMED
-                      </span>
-                    )}
-                    {pass.status === 'boarding' && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/90 text-stone-950 font-mono-code text-[10px] font-bold tracking-wider backdrop-blur-md shadow-sm border border-amber-300">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-950 animate-ping" />
-                        BOARDING
-                      </span>
-                    )}
-                    {pass.status === 'scheduled' && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-800/80 text-stone-200 font-mono-code text-[10px] font-bold tracking-wider backdrop-blur-md border border-stone-600">
-                        SCHEDULED
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Route Display */}
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-2xl tracking-tight leading-none font-mono-code">
-                          {pass.routeFrom.code}
-                        </span>
-                        <span className="font-mono-code text-[9px] text-stone-300 tracking-widest uppercase">
-                          {pass.routeFrom.city}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <Plane className="w-4 h-4 text-amber-400 transform rotate-90" />
-                        <span className="w-12 h-[1px] bg-white/40 border-t border-dashed border-white/60 my-1" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold text-2xl tracking-tight leading-none font-mono-code">
-                          {pass.routeTo.code}
-                        </span>
-                        <span className="font-mono-code text-[9px] text-stone-300 tracking-widest uppercase">
-                          {pass.routeTo.city}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="p-2 rounded-full bg-white/20 backdrop-blur-md group-hover:bg-white group-hover:text-stone-900 transition-colors">
-                      <ArrowUpRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Main Pass Info */}
-                <div className="p-5 flex flex-col gap-3 flex-1 justify-between">
-                  <div>
-                    <span className="font-mono-code text-[10px] text-stone-400 font-semibold tracking-widest uppercase">
-                      {pass.region}
-                    </span>
-                    <h3 className="font-serif-editorial italic text-2xl font-normal text-stone-900 leading-tight group-hover:text-amber-800 transition-colors">
-                      {pass.name}
-                    </h3>
-                  </div>
-
-                  {/* Micro Info Table */}
-                  <div className="grid grid-cols-2 gap-2 pt-3 border-t border-stone-100 font-mono-code text-xs">
-                    <div>
-                      <span className="text-[9px] text-stone-400 uppercase tracking-wider block">Duration</span>
-                      <span className="font-bold text-stone-800">{pass.duration}</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-stone-400 uppercase tracking-wider block">Est. Cost</span>
-                      <span className="font-bold text-emerald-700">{pass.estimatedBudget}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Perforated Stub Notch & Barcode */}
-                <div className="relative border-t-2 border-dashed border-stone-200 bg-stone-50 p-4 flex items-center justify-between ticket-stub">
-                  <div className="flex flex-col">
-                    <span className="font-mono-code text-[8px] text-stone-400 uppercase tracking-widest">
-                      GATE / SEAT
-                    </span>
-                    <span className="font-mono-code text-xs font-bold text-stone-800">
-                      {pass.gate} • {pass.seat}
-                    </span>
-                  </div>
-
-                  {/* Fake Barcode Graphic */}
-                  <div className="flex flex-col items-end">
-                    <div className="w-24 h-6 bg-[repeating-linear-gradient(90deg,#121316_0_2px,transparent_2px_4px,#121316_4px_6px)]" />
-                    <span className="font-mono-code text-[8px] text-stone-400 tracking-widest mt-0.5">
-                      PASS-{pass.id.toUpperCase()}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Callout Card below */}
-        <div className="mt-16 p-8 rounded-3xl bg-white shadow-xl border border-stone-200 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-amber-100 text-amber-900 shrink-0">
-              <Sparkles className="w-6 h-6" />
-            </div>
+      {/* Bottom Card Content */}
+      <div className="bg-[#f4f4f2] text-stone-900 rounded-b-[28px] rounded-tl-[32px] p-5 sm:p-6 -mt-8 relative z-10 flex-1 flex flex-col justify-between border-t border-stone-200/60">
+        <div className="grid grid-cols-12 gap-3">
+          {/* Left Column: Title & Info */}
+          <div className="col-span-8 flex flex-col justify-between space-y-3">
             <div>
-              <h3 className="font-serif-editorial italic text-2xl font-normal text-stone-900">
-                Need a Custom Itinerary Designed?
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-black mb-1 leading-none">
+                {pass.countryTitle}
+              </h1>
+              <p className="text-[11px] text-stone-600 leading-relaxed font-medium line-clamp-2">
+                {pass.itinerarySummary}
+              </p>
+            </div>
+
+            <hr className="border-stone-300/80" />
+
+            <div>
+              <h3 className="font-extrabold text-[10px] uppercase tracking-wider text-black mb-0.5">
+                VISIT {pass.countryTitle.toUpperCase()}
               </h3>
-              <p className="text-stone-600 text-xs sm:text-sm mt-0.5">
-                We craft custom day-by-day routes tailored to your budget, travel style, and duration.
+              <p className="text-[11px] font-bold text-stone-800 mb-0.5">
+                Timeless. Unforgettable.
+              </p>
+              <p className="text-[10px] text-stone-500 leading-relaxed line-clamp-2">
+                Discover the beauty and flavors that make {pass.countryTitle} unforgettable.
               </p>
             </div>
           </div>
 
-          <button
-            onClick={() => onPlanTrip()}
-            className="px-6 py-3 rounded-full bg-[#121316] text-[#FAF9F6] font-bold text-xs uppercase tracking-widest hover:bg-stone-800 transition-all shadow-lg hover:scale-105 active:scale-95 shrink-0"
-          >
-            Create Custom Route
+          {/* Right Column: Vertical Accent Section */}
+          <div className="col-span-4 border-l border-stone-300/80 pl-2.5 flex flex-col items-center justify-between">
+            <Sparkles className="w-4 h-4 text-black fill-black" />
+
+            <div className="flex items-center gap-2 my-auto py-1">
+              <span className="text-xl sm:text-2xl font-black uppercase tracking-tight text-black [writing-mode:vertical-rl] rotate-180">
+                {pass.categoryTitle}
+              </span>
+              <span className="text-[9px] font-bold text-stone-500 [writing-mode:vertical-rl] rotate-180 tracking-widest">
+                {pass.nativeTitle}
+              </span>
+              <div className="flex flex-col gap-1 items-center">
+                <span className="w-1 h-1 bg-black rounded-full" />
+                <span className="w-1 h-1 bg-black rounded-full" />
+                <span className="w-1 h-1 bg-black rounded-full" />
+              </div>
+              <span className="text-[9px] text-stone-400 [writing-mode:vertical-rl] rotate-180 tracking-wider">
+                {pass.nativeAction}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1 text-stone-800">
+              <Camera className="w-3 h-3 hover:opacity-75 transition-opacity" />
+              <Share2 className="w-3 h-3 hover:opacity-75 transition-opacity" />
+              <Send className="w-3 h-3 hover:opacity-75 transition-opacity" />
+              <MessageCircle className="w-3 h-3 hover:opacity-75 transition-opacity" />
+            </div>
+          </div>
+        </div>
+
+        {/* Card Footer */}
+        <div className="mt-5 pt-3 border-t border-stone-300/80 flex items-center justify-between text-[11px] font-semibold text-stone-800">
+          <span className="font-bold text-stone-900">2026</span>
+          <button className="hover:underline tracking-wide font-bold flex items-center gap-1 text-black">
+            <span>Explore {pass.countryTitle}</span>
+            <ArrowRight className="w-3 h-3" />
           </button>
+          <span className="text-stone-500 font-sans text-[10px]">ryoko.com</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function Destinations({ onPlanTrip }: DestinationsProps) {
+  const [selectedRegion, setSelectedRegion] = useState<string>('All');
+  const [selectedPass, setSelectedPass] = useState<DestinationPass | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Smooth Viewport Trigger
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start 0.85', 'end 0.2'],
+  });
+
+  const regions = ['All', 'East Asia', 'Central Europe'];
+
+  const filteredData =
+    selectedRegion === 'All'
+      ? destinationsData
+      : destinationsData.filter((d) => d.region === selectedRegion);
+
+  return (
+    <section 
+      ref={containerRef}
+      id="destinations" 
+      className="py-20 px-4 sm:px-6 bg-[#FAF9F6] text-[#121316] relative overflow-visible"
+    >
+      <div className="max-w-[1400px] mx-auto">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-900 text-white text-xs font-sans font-semibold tracking-wide uppercase mb-3 shadow-md">
+              <Compass className="w-3.5 h-3.5 text-amber-400" />
+              <span>AUTHENTIC DESTINATION GUIDES</span>
+            </div>
+            <h2 className="font-sans text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#121316] leading-none">
+              Explore Our Journeys
+            </h2>
+            <p className="text-stone-600 font-medium text-sm sm:text-base mt-2 max-w-xl">
+              Click any poster card to inspect detailed day-by-day itineraries, exact cost breakdowns, and 4K travel films.
+            </p>
+          </div>
+
+          {/* Region Filter Buttons */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {regions.map((region) => (
+              <button
+                key={region}
+                onClick={() => setSelectedRegion(region)}
+                className={`px-4 py-2 rounded-full text-xs font-bold font-sans uppercase tracking-wider transition-all whitespace-nowrap ${
+                  selectedRegion === region
+                    ? 'bg-[#121316] text-[#FAF9F6] shadow-lg scale-105'
+                    : 'bg-white text-stone-600 hover:bg-stone-200/60 border border-stone-200'
+                }`}
+              >
+                {region}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 4 Cards Grid with Staggered Scroll Animation */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
+          <AnimatePresence mode="popLayout">
+            {filteredData.map((pass, index) => (
+              <AnimatedCard
+                key={pass.id}
+                pass={pass}
+                index={index}
+                scrollYProgress={scrollYProgress}
+                onSelect={(pass) => setSelectedPass(pass)}
+              />
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Detail Boarding Pass Modal */}
+      {/* Boarding Pass Detail Modal */}
       <BoardingPassModal
         pass={selectedPass}
         onClose={() => setSelectedPass(null)}
-        onPlanTrip={(dest) => onPlanTrip(dest)}
+        onPlanTrip={(dest) => {
+          setSelectedPass(null);
+          const el = document.getElementById('inquiry-trigger');
+          if (el) el.click();
+        }}
       />
     </section>
   );
