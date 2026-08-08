@@ -1,27 +1,23 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 
 interface HeroProps {
-  onSearch?: (filters: { season: string; duration: string; departureMonth: string }) => void;
-  products?: any[];
-  onOpenInquiry?: () => void;
+  onSearch: (filters: { season: string; duration: string; departureMonth: string }) => void;
 }
 
 const HERO_SLIDES = [
   {
-    image: '/images/japan-nara.jpg',
+    image: 'images/pexels-afhamhmsyri-34021102.jpg',
     title: 'Hakone Torii Gate & Mt. Fuji',
     number: '01',
   },
   {
-    image: '/images/switzerland.jpg',
+    image: 'images/pexels-beigh-yabaar-865585625-32584961.jpg',
     title: 'Kyoto Arashiyama & Shrines',
     number: '02',
   },
   {
-    image: '/images/south-korea.jpg',
+    image: '/images/pexels-sarmat-batagov-776392502-35139475.jpg',
     title: 'Tokyo Neon & Ginza Lights',
     number: '03',
   },
@@ -102,15 +98,13 @@ export const HeroParallax: React.FC<HeroProps> = ({ onSearch }) => {
 
   const handleFinderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSearch) {
-      onSearch({
-        season: selectedSeason,
-        duration: selectedDuration,
-        departureMonth: selectedDepartureMonth,
-      });
-    }
+    onSearch({
+      season: selectedSeason,
+      duration: selectedDuration,
+      departureMonth: selectedDepartureMonth,
+    });
 
-    const packagesSection = document.getElementById('destinations');
+    const packagesSection = document.getElementById('packages-section');
     if (packagesSection) {
       packagesSection.scrollIntoView({ behavior: 'smooth' });
     }
@@ -120,7 +114,7 @@ export const HeroParallax: React.FC<HeroProps> = ({ onSearch }) => {
     DEPARTURE_MONTHS_BY_SEASON[selectedSeason] || DEPARTURE_MONTHS_BY_SEASON['Spring/Sakura'];
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col justify-between overflow-hidden pt-28 pb-24 font-sans">
+    <section id="hero" className="relative min-h-screen flex flex-col justify-between overflow-hidden pt-28 pb-24">
       {/* Background Image with Crossfade & Atmospheric Vignette */}
       <div className="absolute inset-0 z-0">
         {HERO_SLIDES.map((slide, idx) => (
@@ -136,16 +130,19 @@ export const HeroParallax: React.FC<HeroProps> = ({ onSearch }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/60" />
       </div>
 
+      {/* Floating Petal HTML5 Canvas */}
+
+
       {/* Main Content Area: Left Upper-Center Position with Justify Between */}
-      <div className="relative z-20 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-12 w-full flex-1 flex flex-col justify-end mt-auto pt-8 pb-0">
+      <div className="relative z-20 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-14 w-full flex-1 flex flex-col justify-center pt-4 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left Column: Giant Title */}
           <div className="lg:col-span-10 text-left">
-            <h1 className="font-black text-6xl sm:text-8xl md:text-[9rem] lg:text-[11rem] tracking-tight uppercase leading-[0.82] text-white drop-shadow-2xl select-none font-sans">
-              TOUR <br />
-              <i className='text-5xl font-mono'>with</i>PURVA
+            <h1 className="font-outfit font-black text-6xl sm:text-8xl md:text-[9rem] lg:text-[11rem] tracking-tight uppercase leading-[0.82] text-white drop-shadow-2xl select-none">
+              VISIT <br />
+              JAPAN
             </h1>
-            <p className="text-xs sm:text-sm font-medium tracking-wider text-slate-300 mt-4 max-w-md">
+            <p className="font-jakarta text-xs sm:text-sm font-medium tracking-wider text-slate-300 mt-4 max-w-md">
               Welcome to Japan National Tourism • Bespoke Expeditions
             </p>
           </div>
@@ -159,7 +156,7 @@ export const HeroParallax: React.FC<HeroProps> = ({ onSearch }) => {
                   onClick={() => setActiveSlide(idx)}
                   className={`flex items-center gap-2 transition-all cursor-pointer ${
                     activeSlide === idx
-                      ? 'text-white text-base font-extrabold font-sans'
+                      ? 'text-white text-base font-extrabold font-outfit'
                       : 'hover:text-white opacity-60'
                   }`}
                 >
@@ -173,6 +170,6 @@ export const HeroParallax: React.FC<HeroProps> = ({ onSearch }) => {
       </div>
 
       {/* Bottom Floating Search Bar */}
-    </section>
+</section>
   );
 };
