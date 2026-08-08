@@ -18,6 +18,8 @@ export interface DestinationDetail {
   name: string;
   countryTitle: string;
   categoryTitle: string;
+  nativeTitle: string;
+  nativeAction: string;
   region: string;
   status: 'filmed' | 'boarding' | 'scheduled';
   statusLabel: string;
