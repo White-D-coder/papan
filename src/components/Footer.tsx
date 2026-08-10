@@ -1,221 +1,72 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { MapPin, Mail, ShieldCheck, ArrowRight, Camera, Video, Share2, Heart } from 'lucide-react';
+interface FooterProps {
+  onBook: () => void;
+}
 
-export default function Footer() {
-  const [email, setEmail] = useState('');
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      alert('Thank you for subscribing!');
-      setEmail('');
-    }
-  };
-
+export default function Footer({ onBook }: FooterProps) {
   return (
-    <footer
-      id="site-footer"
-      className="relative z-40 bg-stone-950 text-white border-t border-stone-800 rounded-none overflow-hidden pt-16 pb-10 px-6 sm:px-12 font-sans w-full shadow-2xl"
-    >
-      {/* Full-Screen Full-Bleed Background Scenic Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/switzerland.jpg"
-          alt="Full Screen Scenic Destination Footer"
-          fill
-          className="object-cover object-center brightness-90"
-          priority
-        />
-        {/* Full Screen Gradient Mask for Perfect Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/75 to-stone-950/50 pointer-events-none" />
-      </div>
+    <footer style={{ background: "#F5F2ED", padding: "100px 32px 52px" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", flexDirection: "column", gap: 80 }}>
 
-      <div className="relative z-10 max-w-7xl mx-auto flex flex-col gap-12">
-        {/* TOP BAR: Logo & Newsletter */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-10 border-b border-stone-800/80">
-          {/* Brand Logo & Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white text-stone-950 flex items-center justify-center font-extrabold text-xs shadow-md">
-              RK
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-xl tracking-widest text-white uppercase">
-                  RYOKO
-                </span>
-                <span className="text-xs font-serif text-stone-400 tracking-wider">
-                  旅行
-                </span>
-              </div>
-              <p className="text-xs text-stone-300 font-bold tracking-tight mt-0.5">
-                Authentic Travel Films &amp; Verifiable Itineraries
-              </p>
-            </div>
-          </div>
-
-          {/* Newsletter Input */}
-          <form onSubmit={handleSubscribe} className="flex items-center w-full lg:w-auto">
-            <div className="relative flex items-center w-full lg:w-[480px] bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-md focus-within:border-teal-400 transition-colors p-1">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email for 2026 Travel Guide PDF"
-                className="w-full px-5 py-2.5 text-xs text-white bg-transparent placeholder:text-stone-300 outline-none font-medium"
-                required
-              />
-              <button 
-                type="submit"
-                className="bg-[#0B7A75] hover:bg-[#07534F] text-white px-6 py-2.5 rounded-full text-[11px] font-extrabold tracking-widest uppercase flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer shadow-md"
-              >
-                <span>FREE GUIDE</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* MIDDLE GRID: 4 Columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-xs">
-          {/* Column 1: NAVIGATION */}
-          <div className="flex flex-col gap-3">
-            <h4 className="font-black text-[11px] tracking-widest text-teal-300 uppercase">
-              NAVIGATION
-            </h4>
-            <ul className="flex flex-col gap-2 font-bold text-stone-200">
-              <li>
-                <a href="#first-frame" className="hover:text-teal-300 transition-colors">
-                  First Frame
-                </a>
-              </li>
-              <li>
-                <a href="#about-us" className="hover:text-teal-300 transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#destinations" className="hover:text-teal-300 transition-colors">
-                  Destinations &amp; Regions
-                </a>
-              </li>
-              <li>
-                <a href="#the-reel" className="hover:text-teal-300 transition-colors">
-                  Film Reel Portal
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 2: DESTINATIONS */}
-          <div className="flex flex-col gap-3">
-            <h4 className="font-black text-[11px] tracking-widest text-teal-300 uppercase">
-              POPULAR GUIDES
-            </h4>
-            <ul className="flex flex-col gap-2 font-bold text-stone-200">
-              <li>
-                <a href="/destinations/japan" className="hover:text-teal-300 transition-colors">
-                  Japan Autumn &amp; Cherry Blossom
-                </a>
-              </li>
-              <li>
-                <a href="/destinations/switzerland" className="hover:text-teal-300 transition-colors">
-                  Swiss Alps &amp; Glacier Express
-                </a>
-              </li>
-              <li>
-                <a href="/destinations/south-korea" className="hover:text-teal-300 transition-colors">
-                  South Korea &amp; Jeju Island
-                </a>
-              </li>
-              <li>
-                <a href="/destinations/austria" className="hover:text-teal-300 transition-colors">
-                  Austria &amp; Bavaria Germany
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: CONNECT SOCIALS */}
-          <div className="flex flex-col gap-3">
-            <h4 className="font-black text-[11px] tracking-widest text-teal-300 uppercase">
-              CONNECT WITH PURVA
-            </h4>
-            <div className="flex items-center gap-2">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Instagram"
-                className="p-2.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-stone-950 transition-all shadow-sm flex items-center justify-center"
-              >
-                <Camera className="w-4 h-4" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="YouTube"
-                className="p-2.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-stone-950 transition-all shadow-sm flex items-center justify-center"
-              >
-                <Video className="w-4 h-4" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Share"
-                className="p-2.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-stone-950 transition-all shadow-sm flex items-center justify-center"
-              >
-                <Share2 className="w-4 h-4" />
-              </a>
-            </div>
-            <p className="text-[11px] text-stone-300 font-medium mt-1">
-              Watch authentic 4K travel films &amp; daily stories on Instagram.
+        {/* CTA block */}
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 40 }}>
+          <div>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(27,42,73,0.4)", marginBottom: 20 }}>
+              Let's plan your next trip
             </p>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "clamp(2.75rem, 6vw, 6rem)", lineHeight: 0.92, letterSpacing: "-0.02em", color: "#1B2A49", margin: 0 }}>
+              Your seat<br /><em style={{ fontStyle: "italic", fontWeight: 400 }}>awaits.</em>
+            </h2>
           </div>
-
-          {/* Column 4: CONTACT & CONCIERGE */}
-          <div className="flex flex-col gap-3">
-            <h4 className="font-black text-[11px] tracking-widest text-teal-300 uppercase">
-              DIRECT CONCIERGE
-            </h4>
-            <ul className="flex flex-col gap-2.5 font-extrabold text-white">
-              <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
-                <span className="text-white font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Tokyo &amp; Zurich Offices
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-amber-400 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
-                <a
-                  href="mailto:concierge@ryoko.com"
-                  className="text-white font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] hover:underline transition-colors"
-                >
-                  concierge@ryoko.com
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
-                <span className="text-white font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-                  Verified Itineraries
-                </span>
-              </li>
-            </ul>
-          </div>
+          <button
+            onClick={onBook}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 11,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "#F5F2ED",
+              background: "#1B2A49",
+              border: "none",
+              borderRadius: 2,
+              padding: "14px 30px",
+              cursor: "pointer",
+              transition: "background 0.25s, color 0.25s",
+              alignSelf: "flex-end",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "#2B4C6F"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "#1B2A49"; }}
+          >
+            Enquire now
+          </button>
         </div>
 
-        {/* BOTTOM BAR: Copyright & Credits */}
-        <div className="pt-8 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between text-[11px] font-bold text-stone-400 gap-4">
-          <p>© 2026 RYOKO. ALL RIGHTS RESERVED. REAL TRAVEL ITINERARIES &amp; FILMS.</p>
-          <p className="flex items-center gap-1 font-extrabold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-            <span>CRAFTED WITH</span>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-current drop-shadow-md" />
-            <span>BY PURVA</span>
-          </p>
+        <div style={{ height: 1, background: "rgba(27,42,73,0.1)" }} />
+
+        {/* Bottom row */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 700, letterSpacing: "0.08em", color: "#1B2A49" }}>SoSunidhi</span>
+
+          <nav style={{ display: "flex", gap: 36 }}>
+            {[
+              { label: "First Frame", href: "#hero" },
+              { label: "About Us", href: "#about" },
+              { label: "Destinations", href: "#destinations" },
+              { label: "The Reel", href: "#reel" },
+            ].map((l) => (
+              <a key={l.href} href={l.href} style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(27,42,73,0.5)", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#1B2A49")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(27,42,73,0.5)")}
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.12em", color: "rgba(27,42,73,0.3)" }}>
+            © 2026
+          </span>
         </div>
       </div>
     </footer>
