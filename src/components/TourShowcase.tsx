@@ -177,36 +177,37 @@ export default function TourShowcase({ onBook }: TripsProps) {
                   </span>
                 </div>
 
-                {/* Route */}
-                <div style={{ position: "absolute", bottom: 24, left: 24, right: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                {/* Destination Title on Image Overlay */}
+                <div style={{ position: "absolute", bottom: 20, left: 24, right: 24, display: "flex", flexDirection: "column" }}>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontStyle: "italic", fontSize: 32, color: "#FFF", margin: 0, lineHeight: 1, textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
+                    {trip.dest}
+                  </h3>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.15em", color: "rgba(255,255,255,0.9)", textTransform: "uppercase", marginTop: 4 }}>
+                    {trip.subtitle}
+                  </span>
+                </div>
+              </div>
+
+              {/* Ticket Middle - Details */}
+              <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 16 }}>
+                {/* Route Section in White Area */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, color: "#FFF", lineHeight: 1 }}>{trip.from}</span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.1em", color: "rgba(255,255,255,0.8)" }}>{trip.fromCity}</span>
+                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28, color: "#1B2A49", lineHeight: 1 }}>{trip.from}</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.1em", color: "#4A5568" }}>{trip.fromCity}</span>
                   </div>
                   
                   {/* Plane Icon */}
-                  <div style={{ color: "#FFF", opacity: 0.8 }}>
+                  <div style={{ color: "#1B2A49", opacity: 0.7 }}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 4-4 4-2.5-1-1 1 3.5 4 4 3.5 1-1-1-2.5 4-4 4 6l1.2-.7c.4-.2.7-.6.6-1.1z"/>
                     </svg>
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 32, color: "#FFF", lineHeight: 1 }}>{trip.to}</span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.1em", color: "rgba(255,255,255,0.8)" }}>{trip.toCity}</span>
+                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 28, color: "#1B2A49", lineHeight: 1 }}>{trip.to}</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: "0.1em", color: "#4A5568" }}>{trip.toCity}</span>
                   </div>
-                </div>
-              </div>
-
-              {/* Ticket Middle - Details */}
-              <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 16 }}>
-                <div>
-                  <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontStyle: "italic", fontSize: 28, color: "#1B2A49", margin: 0, lineHeight: 1 }}>
-                    {trip.dest}
-                  </h3>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.15em", color: "#4A5568", textTransform: "uppercase" }}>
-                    {trip.subtitle}
-                  </span>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
