@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 import {
-  AnimatePresence,
   motion,
   useMotionValueEvent,
   useScroll,
@@ -42,11 +41,8 @@ const STEPS = [
 
 export default function StorySection() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeStep, setActiveStep] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const scrollTimeoutRef =
-    useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -54,7 +50,7 @@ export default function StorySection() {
   });
 
   /*
-   * Smooth scroll progress
+   * Smooth scroll progress for background effects & route line
    */
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: isScrolling ? 115 : 42,
@@ -72,27 +68,6 @@ export default function StorySection() {
     scrollTimeoutRef.current = setTimeout(() => {
       setIsScrolling(false);
     }, 140);
-  });
-
-  /*
-   * =========================================================
-   * ACTIVE STORY
-   * =========================================================
-   */
-
-  useMotionValueEvent(smoothProgress, "change", (latest) => {
-    let nextStep = 0;
-
-    if (latest >= 0.66) {
-      nextStep = 2;
-    } else if (latest >= 0.33) {
-      nextStep = 1;
-    }
-
-    setActiveStep((previous) => {
-      if (previous === nextStep) return previous;
-      return nextStep;
-    });
   });
 
   /*
@@ -145,18 +120,6 @@ export default function StorySection() {
 
   /*
    * =========================================================
-   * IMAGE PARALLAX
-   * =========================================================
-   */
-
-  const imageY = useTransform(
-    smoothProgress,
-    [0, 1],
-    ["-8%", "8%"]
-  );
-
-  /*
-   * =========================================================
    * PAPER ROTATION
    * =========================================================
    */
@@ -187,207 +150,7 @@ export default function StorySection() {
       }}
     >
       {/* =====================================================
-          SVG MASK DEFINITIONS
-      ====================================================== */}
-
-      <svg
-        width="0"
-        height="0"
-        style={{
-          position: "absolute",
-          pointerEvents: "none",
-        }}
-        aria-hidden="true"
-      >
-        <defs>
-          {STEPS.map((_, index) => (
-            <React.Fragment key={index}>
-              {/* Slight organic displacement */}
-              <filter
-                id={`cloudNoise-${index}`}
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feTurbulence
-                  type="fractalNoise"
-                  baseFrequency="0.018"
-                  numOctaves="3"
-                  seed={index + 10}
-                  result="noise"
-                />
-
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="noise"
-                  scale="28"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                />
-              </filter>
-
-              {/* Cloud-shaped image mask */}
-              <mask
-                id={`cloudMask-${index}`}
-                maskUnits="objectBoundingBox"
-              >
-                {/* Main image area */}
-                <rect
-                  x="5%"
-                  y="5%"
-                  width="90%"
-                  height="90%"
-                  rx="8%"
-                  fill="white"
-                  filter={`url(#cloudNoise-${index})`}
-                />
-
-                {/* =================================================
-                    CLOUD CUTOUTS
-                ================================================= */}
-
-                {/* Top left */}
-                <circle
-                  cx="5%"
-                  cy="10%"
-                  r="8%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="12%"
-                  cy="4%"
-                  r="7%"
-                  fill="black"
-                />
-
-                {/* Left edge */}
-                <circle
-                  cx="2%"
-                  cy="27%"
-                  r="7%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="1%"
-                  cy="52%"
-                  r="6%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="4%"
-                  cy="76%"
-                  r="8%"
-                  fill="black"
-                />
-
-                {/* Bottom left */}
-                <circle
-                  cx="10%"
-                  cy="94%"
-                  r="9%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="23%"
-                  cy="98%"
-                  r="7%"
-                  fill="black"
-                />
-
-                {/* Bottom */}
-                <circle
-                  cx="42%"
-                  cy="98%"
-                  r="7%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="61%"
-                  cy="97%"
-                  r="8%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="80%"
-                  cy="96%"
-                  r="9%"
-                  fill="black"
-                />
-
-                {/* Right bottom */}
-                <circle
-                  cx="95%"
-                  cy="87%"
-                  r="8%"
-                  fill="black"
-                />
-
-                {/* Right */}
-                <circle
-                  cx="98%"
-                  cy="63%"
-                  r="7%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="97%"
-                  cy="38%"
-                  r="8%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="94%"
-                  cy="16%"
-                  r="7%"
-                  fill="black"
-                />
-
-                {/* Top right */}
-                <circle
-                  cx="86%"
-                  cy="4%"
-                  r="8%"
-                  fill="black"
-                />
-
-                {/* Extra organic small cuts */}
-                <circle
-                  cx="16%"
-                  cy="92%"
-                  r="4%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="89%"
-                  cy="91%"
-                  r="5%"
-                  fill="black"
-                />
-
-                <circle
-                  cx="6%"
-                  cy="62%"
-                  r="4%"
-                  fill="black"
-                />
-              </mask>
-            </React.Fragment>
-          ))}
-        </defs>
-      </svg>
-
-      {/* =====================================================
-          BACKGROUND
+          BACKGROUND & PAPER TEXTURE
       ====================================================== */}
 
       <div
@@ -409,10 +172,7 @@ export default function StorySection() {
           }}
         />
 
-        {/* =================================================
-            BACKGROUND CLOUD 01
-        ================================================== */}
-
+        {/* BACKGROUND CLOUD 01 */}
         <motion.div
           style={{
             position: "absolute",
@@ -429,10 +189,7 @@ export default function StorySection() {
           }}
         />
 
-        {/* =================================================
-            BACKGROUND CLOUD 02
-        ================================================== */}
-
+        {/* BACKGROUND CLOUD 02 */}
         <motion.div
           style={{
             position: "absolute",
@@ -449,10 +206,7 @@ export default function StorySection() {
           }}
         />
 
-        {/* =================================================
-            BACKGROUND CLOUD 03
-        ================================================== */}
-
+        {/* BACKGROUND CLOUD 03 */}
         <motion.div
           style={{
             position: "absolute",
@@ -468,10 +222,7 @@ export default function StorySection() {
           }}
         />
 
-        {/* =================================================
-            ROUTE LINE
-        ================================================== */}
-
+        {/* ROUTE LINE */}
         <svg
           viewBox="0 0 1200 3000"
           preserveAspectRatio="none"
@@ -502,33 +253,10 @@ export default function StorySection() {
             }}
           />
 
-          <circle
-            cx="170"
-            cy="0"
-            r="4"
-            fill="#B24C35"
-          />
-
-          <circle
-            cx="720"
-            cy="760"
-            r="4"
-            fill="#B24C35"
-          />
-
-          <circle
-            cx="280"
-            cy="1770"
-            r="4"
-            fill="#B24C35"
-          />
-
-          <circle
-            cx="1030"
-            cy="3000"
-            r="4"
-            fill="#B24C35"
-          />
+          <circle cx="170" cy="0" r="4" fill="#B24C35" />
+          <circle cx="720" cy="760" r="4" fill="#B24C35" />
+          <circle cx="280" cy="1770" r="4" fill="#B24C35" />
+          <circle cx="1030" cy="3000" r="4" fill="#B24C35" />
         </svg>
       </div>
 
@@ -542,27 +270,15 @@ export default function StorySection() {
           zIndex: 2,
           maxWidth: "1100px",
           margin: "0 auto",
-          padding: "170px 32px 100px",
+          padding: "140px 32px 80px",
           textAlign: "center",
         }}
       >
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 50,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            margin: "-100px",
-          }}
-          transition={{
-            duration: 1,
-            ease: [0.16, 1, 0.3, 1],
-          }}
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
           <div
             style={{
@@ -589,7 +305,6 @@ export default function StorySection() {
           >
             We don't just plan
             <br />
-
             <span
               style={{
                 fontFamily: "Georgia, serif",
@@ -599,9 +314,7 @@ export default function StorySection() {
             >
               the trip.
             </span>
-
             <br />
-
             We live it first.
           </h2>
 
@@ -624,7 +337,7 @@ export default function StorySection() {
       </div>
 
       {/* =====================================================
-          STICKY STORY
+          STACKED STEPS (01, 02, 03) - VERTICALLY SCROLLABLE
       ====================================================== */}
 
       <div
@@ -633,107 +346,33 @@ export default function StorySection() {
           zIndex: 2,
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "0 32px",
+          padding: "40px 32px 100px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "120px",
         }}
       >
-        <div
-          style={{
-            position: "sticky",
-            top: 0,
-            height: "100vh",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          {/* =================================================
-              PROGRESS
-          ================================================== */}
-
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "40px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "12px",
-            }}
-          >
-            <div
+        {STEPS.map((step, index) => {
+          const isEven = index % 2 === 1;
+          return (
+            <motion.div
+              key={step.number}
+              initial={{ opacity: 0, y: 60 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
               style={{
-                position: "relative",
-                width: "1px",
-                height: "90px",
-                background: "rgba(27,42,73,.15)",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "clamp(40px, 7vw, 100px)",
+                alignItems: "center",
               }}
             >
-              <motion.div
+              {/* TEXT BLOCK */}
+              <div
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "1px",
-                  height: "100%",
-                  background: "#1B2A49",
-                  scaleY: smoothProgress,
-                  transformOrigin: "top",
-                }}
-              />
-            </div>
-
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "9px",
-                letterSpacing: "0.1em",
-              }}
-            >
-              0{activeStep + 1}
-            </div>
-          </div>
-
-          {/* =================================================
-              ACTIVE CONTENT
-          ================================================== */}
-
-          <div
-            style={{
-              width: "100%",
-              display: "grid",
-              gridTemplateColumns:
-                "minmax(280px, .8fr) minmax(420px, 1.2fr)",
-              gap: "clamp(50px, 8vw, 130px)",
-              alignItems: "center",
-            }}
-          >
-            {/* =================================================
-                TEXT
-            ================================================== */}
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={STEPS[activeStep].number}
-                initial={{
-                  opacity: 0,
-                  y: 35,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  y: -35,
-                }}
-                transition={{
-                  duration: 0.65,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                style={{
-                  maxWidth: "430px",
+                  order: isEven ? 2 : 1,
+                  maxWidth: "480px",
                 }}
               >
                 <div
@@ -745,7 +384,7 @@ export default function StorySection() {
                     marginBottom: "16px",
                   }}
                 >
-                  {STEPS[activeStep].number}
+                  {step.number}
                 </div>
 
                 <div
@@ -755,10 +394,10 @@ export default function StorySection() {
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
                     color: "#6C7788",
-                    marginBottom: "35px",
+                    marginBottom: "24px",
                   }}
                 >
-                  {STEPS[activeStep].title}
+                  {step.title}
                 </div>
 
                 <h3
@@ -766,19 +405,19 @@ export default function StorySection() {
                     margin: 0,
                     fontFamily: "var(--font-display)",
                     fontWeight: 700,
-                    fontSize: "clamp(2.2rem, 4vw, 4rem)",
-                    lineHeight: 1.02,
+                    fontSize: "clamp(2.2rem, 4vw, 3.8rem)",
+                    lineHeight: 1.05,
                     letterSpacing: "-0.04em",
                     color: "#1B2A49",
                   }}
                 >
-                  {STEPS[activeStep].heading}
+                  {step.heading}
                 </h3>
 
                 <p
                   style={{
-                    margin: "26px 0 0",
-                    maxWidth: "390px",
+                    margin: "24px 0 0",
+                    maxWidth: "420px",
                     fontFamily: "var(--font-display)",
                     fontWeight: 500,
                     fontSize: "15px",
@@ -786,7 +425,7 @@ export default function StorySection() {
                     color: "#687180",
                   }}
                 >
-                  {STEPS[activeStep].description}
+                  {step.description}
                 </p>
 
                 <div
@@ -794,7 +433,7 @@ export default function StorySection() {
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
-                    marginTop: "35px",
+                    marginTop: "32px",
                     fontFamily: "var(--font-mono)",
                     fontSize: "9px",
                     letterSpacing: "0.15em",
@@ -809,324 +448,80 @@ export default function StorySection() {
                       background: "#B24C35",
                     }}
                   />
-
-                  {STEPS[activeStep].location}
+                  {step.location}
                 </div>
-              </motion.div>
-            </AnimatePresence>
+              </div>
 
-            {/* =================================================
-                CLOUD / WATERCOLOUR IMAGE FRAME
-            ================================================== */}
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={STEPS[activeStep].number}
-                initial={{
-                  opacity: 0,
-                  scale: 0.94,
-                  y: 50,
-                }}
-                animate={{
-                  opacity: 1,
-                  scale: isHovered ? 1.025 : 1,
-                  y: 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  scale: 1.02,
-                  y: -35,
-                }}
-                transition={{
-                  duration: isHovered ? 0.45 : 0.9,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+              {/* IMAGE BLOCK */}
+              <div
                 style={{
+                  order: isEven ? 1 : 2,
                   position: "relative",
-                  height: "min(68vh, 650px)",
+                  height: "clamp(340px, 50vh, 520px)",
                   width: "100%",
                 }}
               >
-                {/* =================================================
-                    IMAGE
-                ================================================== */}
-
                 <div
                   style={{
                     position: "absolute",
-                    inset: "-2%",
+                    inset: 0,
                     overflow: "hidden",
-                    // WebkitMaskImage: \`url(#cloudMask-\${activeStep})\`,
-                    // maskImage: \`url(#cloudMask-\${activeStep})\`,
-                    WebkitMaskSize: "100% 100%",
-                    maskSize: "100% 100%",
-                    WebkitMaskRepeat: "no-repeat",
-                    maskRepeat: "no-repeat",
-                    borderRadius: "24px" // fallback
+                    borderRadius: "24px",
+                    boxShadow: "0 20px 50px rgba(27,42,73,0.12)",
                   }}
                 >
-                  <motion.img
-                    src={STEPS[activeStep].image}
-                    alt={STEPS[activeStep].location}
+                  <img
+                    src={step.image}
+                    alt={step.location}
                     style={{
                       width: "100%",
-                      height: "115%",
+                      height: "100%",
                       objectFit: "cover",
                       display: "block",
-                      y: imageY,
-                      scale: 1.06,
-
-                      filter:
-                        "saturate(.92) contrast(.96)",
+                      filter: "saturate(.92) contrast(.96)",
                     }}
                   />
                 </div>
 
-                {/* =================================================
-                    WHITE CLOUD — BOTTOM
-                ================================================== */}
-
-                <motion.div
-                  animate={{
-                    x: ["-4%", "5%", "-4%"],
-                  }}
-                  transition={{
-                    duration: isHovered ? 8 : 14,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    position: "absolute",
-                    left: "-12%",
-                    bottom: "-10%",
-                    width: "65%",
-                    height: "35%",
-
-                    background:
-                      "radial-gradient(ellipse at center, rgba(255,255,255,.98) 0%, rgba(255,255,255,.8) 35%, rgba(255,255,255,0) 72%)",
-
-                    filter: "blur(18px)",
-
-                    pointerEvents: "none",
-                  }}
-                />
-
-                {/* =================================================
-                    WHITE CLOUD — TOP RIGHT
-                ================================================== */}
-
-                <motion.div
-                  animate={{
-                    x: ["5%", "-3%", "5%"],
-                  }}
-                  transition={{
-                    duration: isHovered ? 11 : 18,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    position: "absolute",
-                    right: "-10%",
-                    top: "-8%",
-                    width: "55%",
-                    height: "30%",
-
-                    background:
-                      "radial-gradient(ellipse at center, rgba(255,255,255,.9), rgba(255,255,255,0) 70%)",
-
-                    filter: "blur(22px)",
-
-                    pointerEvents: "none",
-                  }}
-                />
-
-                {/* =================================================
-                    FLOATING CLOUD PUFFS
-                ================================================== */}
-
-                {[
-                  {
-                    left: "-3%",
-                    top: "28%",
-                    size: 110,
-                    delay: 0,
-                  },
-                  {
-                    left: "2%",
-                    bottom: "18%",
-                    size: 140,
-                    delay: 1.5,
-                  },
-                  {
-                    right: "-2%",
-                    bottom: "28%",
-                    size: 120,
-                    delay: 2.5,
-                  },
-                  {
-                    right: "4%",
-                    top: "16%",
-                    size: 90,
-                    delay: 1,
-                  },
-                ].map((cloud, index) => (
-                  <motion.div
-                    key={index}
-                    animate={{
-                      y: [-5, 5, -5],
-                      x: [-3, 4, -3],
-                      scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                      duration: isHovered
-                        ? 4 + index * 0.5
-                        : 6 + index,
-                      delay: cloud.delay,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                    style={{
-                      position: "absolute",
-
-                      left: cloud.left,
-                      right: cloud.right,
-                      top: cloud.top,
-                      bottom: cloud.bottom,
-
-                      width: cloud.size,
-                      height: cloud.size * 0.7,
-
-                      borderRadius: "50%",
-
-                      background:
-                        "radial-gradient(circle, rgba(255,255,255,.92) 0%, rgba(255,255,255,.6) 45%, rgba(255,255,255,0) 75%)",
-
-                      filter: "blur(12px)",
-
-                      pointerEvents: "none",
-                    }}
-                  />
-                ))}
-
-                {/* =================================================
-                    IMAGE CAPTION
-                ================================================== */}
-
+                {/* Cloud overlay glow bottom */}
                 <div
                   style={{
                     position: "absolute",
-                    left: "12%",
-                    right: "12%",
-                    bottom: "14%",
+                    left: "-8%",
+                    bottom: "-8%",
+                    width: "60%",
+                    height: "35%",
+                    background:
+                      "radial-gradient(ellipse at center, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 72%)",
+                    filter: "blur(18px)",
+                    pointerEvents: "none",
+                  }}
+                />
 
+                {/* Caption overlay */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "8%",
+                    right: "8%",
+                    bottom: "8%",
                     display: "flex",
                     justifyContent: "space-between",
-
                     fontFamily: "var(--font-mono)",
                     fontSize: "9px",
                     letterSpacing: "0.15em",
-
                     color: "#fff",
-
-                    textShadow:
-                      "0 2px 15px rgba(0,0,0,.45)",
-
+                    textShadow: "0 2px 15px rgba(0,0,0,.6)",
                     pointerEvents: "none",
                   }}
                 >
-                  <span>
-                    TRAVEL NOTE
-                  </span>
-
-                  <span>
-                    {STEPS[activeStep].number}
-                  </span>
+                  <span>TRAVEL NOTE</span>
+                  <span>{step.number}</span>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* =================================================
-            SCROLL SPACE
-        ================================================== */}
-
-        <div
-          style={{
-            height: "200vh",
-            marginTop: "-100vh",
-            pointerEvents: "none",
-          }}
-        />
-      </div>
-
-      {/* =====================================================
-          STEP INDICATORS
-      ====================================================== */}
-
-      <div
-        style={{
-          position: "relative",
-          zIndex: 3,
-          maxWidth: "1000px",
-          margin: "0 auto",
-          padding: "100px 32px 0",
-
-          display: "flex",
-          justifyContent: "center",
-          gap: "12px",
-        }}
-      >
-        {STEPS.map((step, index) => (
-          <button
-            key={step.number}
-            onClick={() => setActiveStep(index)}
-            style={{
-              border: "none",
-              background: "transparent",
-              padding: "10px",
-              cursor: "pointer",
-
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-
-              fontFamily: "var(--font-mono)",
-              fontSize: "9px",
-              letterSpacing: "0.12em",
-
-              color:
-                activeStep === index
-                  ? "#1B2A49"
-                  : "rgba(27,42,73,.35)",
-
-              transition: "color .3s ease",
-            }}
-          >
-            <span
-              style={{
-                width:
-                  activeStep === index
-                    ? "24px"
-                    : "8px",
-
-                height: "1px",
-
-                background:
-                  activeStep === index
-                    ? "#1B2A49"
-                    : "rgba(27,42,73,.25)",
-
-                transition:
-                  "width .5s cubic-bezier(.16,1,.3,1)",
-              }}
-            />
-
-            {step.number}
-          </button>
-        ))}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* =====================================================
@@ -1137,32 +532,16 @@ export default function StorySection() {
         style={{
           position: "relative",
           zIndex: 2,
-
           maxWidth: "900px",
-
-          margin: "150px auto 0",
+          margin: "80px auto 0",
           padding: "0 32px 150px",
-
           textAlign: "center",
-
           rotate: paperRotate,
         }}
-        initial={{
-          opacity: 0,
-          y: 40,
-        }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-          margin: "-100px",
-        }}
-        transition={{
-          duration: 1,
-          ease: [0.16, 1, 0.3, 1],
-        }}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
         <div
           style={{
@@ -1203,20 +582,16 @@ export default function StorySection() {
         <h4
           style={{
             margin: 0,
-
             fontFamily: "var(--font-display)",
             fontWeight: 700,
-
             fontSize: "clamp(3rem, 6vw, 6rem)",
             lineHeight: 0.9,
             letterSpacing: "-0.05em",
-
             color: "#1B2A49",
           }}
         >
           No fluff.
           <br />
-
           <span
             style={{
               fontFamily: "Georgia, serif",
@@ -1231,13 +606,10 @@ export default function StorySection() {
         <p
           style={{
             margin: "32px auto 0",
-
             fontFamily: "var(--font-display)",
             fontWeight: 500,
-
             fontSize: "16px",
             lineHeight: 1.6,
-
             color: "#687180",
           }}
         >
@@ -1246,32 +618,6 @@ export default function StorySection() {
           and places worth getting lost in.
         </p>
       </motion.div>
-
-      {/* =====================================================
-          MOBILE
-      ====================================================== */}
-
-      <style jsx>{`
-        @media (max-width: 800px) {
-          #about > div:nth-of-type(2) {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-          }
-
-          #about > div:nth-of-type(2) > div {
-            position: relative !important;
-            height: auto !important;
-            display: block !important;
-          }
-
-          #about
-            > div:nth-of-type(2)
-            > div
-            > div:last-child {
-            margin-top: 50px;
-          }
-        }
-      `}</style>
     </section>
   );
 }
