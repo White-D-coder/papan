@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, Caveat } from "next/font/google";
 import "./globals.css";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -43,6 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} ${caveat.variable}`}>
       <body className="bg-[#F5F2ED] text-[#1A1714] antialiased">
+        <ScrollToTop />
         {children}
       </body>
     </html>

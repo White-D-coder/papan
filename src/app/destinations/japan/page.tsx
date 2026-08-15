@@ -2250,21 +2250,42 @@ const DAYS = [
     city: "TOKYO",
     title: "The city that never stops.",
     text: "Start with the energy of Tokyo — quiet shrines in the morning, tiny alleys at night and everything between.",
-    image: "/images/japan/tokyo.jpg",
+    images: [
+      "/images/japan/tokyo.jpg",
+      "/images/japan/hotel-tokyo.jpg",
+      "/images/japan/ramen.jpg",
+      "/images/japan/cinema-1.jpg",
+      "/images/japan/sushi.jpg",
+      "/images/japan/cinema-4.jpg",
+    ],
   },
   {
     day: "02",
     city: "KYOTO",
     title: "Slow down. Look closer.",
     text: "Traditional streets, temple gardens and the quieter side of Japan. Kyoto is where the pace changes.",
-    image: "/images/japan/kyoto.jpg",
+    images: [
+      "/images/japan/kyoto.jpg",
+      "/images/japan/hotel-kyoto.jpg",
+      "/images/japan/matcha.jpg",
+      "/images/japan/cinema-2.jpg",
+      "/images/japan/autumn.jpg",
+      "/images/japan/cinema-5.jpg",
+    ],
   },
   {
     day: "03",
     city: "OSAKA",
     title: "Eat your way through it.",
     text: "Neon streets, local markets and food stops that deserve their own itinerary.",
-    image: "/images/japan/osaka.jpg",
+    images: [
+      "/images/japan/osaka.jpg",
+      "/images/japan/hotel-osaka.jpg",
+      "/images/japan/yakiniku.jpg",
+      "/images/japan/cinema-3.jpg",
+      "/images/japan/spring.jpg",
+      "/images/japan/cinema-6.jpg",
+    ],
   },
 ];
 
@@ -2620,20 +2641,6 @@ function Cinema() {
         <Label number="01">
           CINEMA
         </Label>
-
-        <h2>
-          Japan,
-          <br />
-          <em>in motion.</em>
-        </h2>
-
-        <p>
-          A moving archive of places,
-          <br />
-          people and moments from
-          <br />
-          the road.
-        </p>
       </div>
 
       <div className="cinema-wall">
@@ -2734,8 +2741,15 @@ function Cinema() {
 function Days() {
   const [active, setActive] =
     useState(0);
+  const [activeImage, setActiveImage] =
+    useState(0);
 
   const day = DAYS[active];
+
+  const handleDayChange = (index: number) => {
+    setActive(index);
+    setActiveImage(0);
+  };
 
   return (
     <section className="days section" id="days">
@@ -2765,10 +2779,10 @@ function Days() {
               <button
                 key={item.day}
                 onMouseEnter={() =>
-                  setActive(index)
+                  handleDayChange(index)
                 }
                 onClick={() =>
-                  setActive(index)
+                  handleDayChange(index)
                 }
                 className={
                   active === index
@@ -2783,34 +2797,55 @@ function Days() {
             ))}
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={day.day}
-              className="day-image"
-              initial={{
-                opacity: 0,
-                scale: 0.96,
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                scale: 1.03,
-              }}
-            >
-              <Image
-                src={day.image}
-                alt={day.city}
-              />
+          <div className="day-gallery">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${day.day}-${activeImage}`}
+                className="day-image"
+                initial={{
+                  opacity: 0,
+                  scale: 0.96,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 1.03,
+                }}
+                transition={{
+                  duration: 0.35,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
+                <Image
+                  src={day.images[activeImage]}
+                  alt={day.city}
+                />
 
-              <div>
-                <span>{day.day}</span>
-                <strong>{day.city}</strong>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                <div>
+                  <span>{day.day}</span>
+                  <strong>{day.city}</strong>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="day-thumbnails">
+              {day.images.map((img: string, idx: number) => (
+                <button
+                  key={`${day.day}-thumb-${idx}`}
+                  type="button"
+                  onClick={() => setActiveImage(idx)}
+                  onMouseEnter={() => setActiveImage(idx)}
+                  className={`day-thumb-btn ${activeImage === idx ? "selected" : ""}`}
+                  aria-label={`View ${day.city} image ${idx + 1}`}
+                >
+                  <Image src={img} alt={`${day.city} thumbnail ${idx + 1}`} />
+                </button>
+              ))}
+            </div>
+          </div>
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -5055,12 +5090,55 @@ export default function JapanPage() {
             #9f3c30;
         }
 
+        .day-gallery {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .day-thumbnails {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 10px;
+          width: 100%;
+        }
+
+        .day-thumb-btn {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 4 / 3;
+          border-radius: 6px;
+          overflow: hidden;
+          border: 2px solid transparent;
+          cursor: pointer;
+          padding: 0;
+          background: transparent;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          opacity: 0.6;
+        }
+
+        .day-thumb-btn:hover {
+          opacity: 0.95;
+          transform: translateY(-2px);
+        }
+
+        .day-thumb-btn.selected {
+          opacity: 1;
+          border-color: #9f3c30;
+          box-shadow: 0 4px 14px rgba(159, 60, 48, 0.35);
+        }
+
+        .day-thumb-btn .image {
+          width: 100%;
+          height: 100%;
+        }
+
         .day-image {
           position:
             relative;
 
           height:
-            580px;
+            500px;
         }
 
         .day-image .image {
