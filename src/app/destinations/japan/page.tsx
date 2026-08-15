@@ -3375,69 +3375,325 @@ function Tips() {
    PACK
 ========================================================= */
 
+/* =========================================================
+   MONTHLY GUIDE & PACKING
+========================================================= */
+
+const MONTHS = [
+  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+];
+
+const MONTHLY_GUIDE: Record<string, {
+  weatherTag: string;
+  tokyoTemp: string;
+  kyotoTemp: string;
+  feelsLike?: string;
+  weatherDesc: string;
+  crowdsLevel: string;
+  crowdsDesc: string;
+  costLevel: string;
+  costDesc: string;
+}> = {
+  JAN: {
+    weatherTag: "WINTER CRISP",
+    tokyoTemp: "2° – 10°C",
+    kyotoTemp: "1° – 9°C",
+    feelsLike: "Feels like 0°C",
+    weatherDesc: "Clear blue skies, crisp cold days & snow in mountains",
+    crowdsLevel: "LOW",
+    crowdsDesc: "Post-New Year quiet, easy temple visits",
+    costLevel: "LOW - MEDIUM",
+    costDesc: "Great hotel discounts & cheap flights",
+  },
+  FEB: {
+    weatherTag: "PLUM BLOSSOMS",
+    tokyoTemp: "3° – 11°C",
+    kyotoTemp: "2° – 10°C",
+    feelsLike: "Feels like 2°C",
+    weatherDesc: "Chilly weather with early plum blossoms blooming",
+    crowdsLevel: "LOW - MEDIUM",
+    crowdsDesc: "Lively at snow resorts, peaceful in cities",
+    costLevel: "MEDIUM",
+    costDesc: "Good value before cherry blossom season",
+  },
+  MAR: {
+    weatherTag: "EARLY SAKURA",
+    tokyoTemp: "5° – 14°C",
+    kyotoTemp: "5° – 14°C",
+    feelsLike: "Feels like 12°C",
+    weatherDesc: "Cool spring breezes & first cherry blossoms",
+    crowdsLevel: "HIGH",
+    crowdsDesc: "Sakura season begins, popular spots get busy",
+    costLevel: "HIGH",
+    costDesc: "Peak spring room rates",
+  },
+  APR: {
+    weatherTag: "PEAK SPRING",
+    tokyoTemp: "10° – 19°C",
+    kyotoTemp: "10° – 20°C",
+    feelsLike: "Feels like 18°C",
+    weatherDesc: "Perfect mild temperatures & full bloom sakura",
+    crowdsLevel: "VERY HIGH",
+    crowdsDesc: "Peak tourist season & Golden Week late April",
+    costLevel: "VERY HIGH",
+    costDesc: "Book hotels 4-6 months in advance",
+  },
+  MAY: {
+    weatherTag: "GOLDEN SUNSHINE",
+    tokyoTemp: "15° – 23°C",
+    kyotoTemp: "14° – 24°C",
+    feelsLike: "Feels like 22°C",
+    weatherDesc: "Warm, clear skies & lush green foliage",
+    crowdsLevel: "MEDIUM",
+    crowdsDesc: "Post-Golden Week calm, ideal for exploring",
+    costLevel: "MEDIUM",
+    costDesc: "Best balance of weather and value",
+  },
+  JUN: {
+    weatherTag: "TSUYU RAINS",
+    tokyoTemp: "19° – 25°C",
+    kyotoTemp: "19° – 27°C",
+    feelsLike: "Feels like 26°C",
+    weatherDesc: "Lush green rain season with vibrant hydrangeas",
+    crowdsLevel: "LOW",
+    crowdsDesc: "Fewer tourists due to seasonal rains",
+    costLevel: "LOW",
+    costDesc: "Great travel deals & hotel rates",
+  },
+  JUL: {
+    weatherTag: "SUMMER FESTIVALS",
+    tokyoTemp: "23° – 29°C",
+    kyotoTemp: "24° – 31°C",
+    feelsLike: "Feels like 33°C",
+    weatherDesc: "Warm summer days, fireworks & Gion Matsuri",
+    crowdsLevel: "HIGH",
+    crowdsDesc: "School holidays & festival crowds",
+    costLevel: "MEDIUM - HIGH",
+    costDesc: "High demand around festival dates",
+  },
+  AUG: {
+    weatherTag: "SUMMER HEAT",
+    tokyoTemp: "25° – 31°C",
+    kyotoTemp: "25° – 33°C",
+    feelsLike: "Feels like 38°C",
+    weatherDesc: "Hot & humid, tropical vibes & night markets",
+    crowdsLevel: "HIGH",
+    crowdsDesc: "Peak Obon holiday travel week mid-August",
+    costLevel: "MEDIUM - HIGH",
+    costDesc: "High domestic vacation demand",
+  },
+  SEP: {
+    weatherTag: "EARLY AUTUMN",
+    tokyoTemp: "21° – 27°C",
+    kyotoTemp: "20° – 28°C",
+    feelsLike: "Feels like 26°C",
+    weatherDesc: "Warm days, cooling evenings & seasonal foods",
+    crowdsLevel: "MEDIUM",
+    crowdsDesc: "Moderate crowds as summer ends",
+    costLevel: "MEDIUM",
+    costDesc: "Balanced off-peak pricing",
+  },
+  OCT: {
+    weatherTag: "PERFECT CRISP",
+    tokyoTemp: "15° – 22°C",
+    kyotoTemp: "14° – 23°C",
+    feelsLike: "Feels like 20°C",
+    weatherDesc: "Clear blue skies, comfortable warmth & low rain",
+    crowdsLevel: "HIGH",
+    crowdsDesc: "Popular month for outdoor sightseeing",
+    costLevel: "HIGH",
+    costDesc: "High demand for autumn travel",
+  },
+  NOV: {
+    weatherTag: "KOYO FOLIAGE",
+    tokyoTemp: "10° – 17°C",
+    kyotoTemp: "9° – 17°C",
+    feelsLike: "Feels like 14°C",
+    weatherDesc: "Brilliant red maple leaves & cool crisp days",
+    crowdsLevel: "HIGH",
+    crowdsDesc: "Peak autumn foliage season in Kyoto",
+    costLevel: "HIGH",
+    costDesc: "High rates around temple illuminations",
+  },
+  DEC: {
+    weatherTag: "WINTER LIGHTS",
+    tokyoTemp: "4° – 12°C",
+    kyotoTemp: "3° – 12°C",
+    feelsLike: "Feels like 5°C",
+    weatherDesc: "City illuminations, crisp air & cozy hot springs",
+    crowdsLevel: "MEDIUM - HIGH",
+    crowdsDesc: "Year-end holiday rush late December",
+    costLevel: "HIGH",
+    costDesc: "Peak rates near New Year's Eve",
+  },
+};
+
 function Pack() {
+  const [selectedMonth, setSelectedMonth] = useState("AUG");
+
+  const currentGuide = MONTHLY_GUIDE[selectedMonth] || MONTHLY_GUIDE["AUG"];
+
   return (
-    <section
-      className="pack"
-      id="pack"
-    >
-      <div className="pack-paper">
-        <Label number="06">
-          PACK
-        </Label>
+    <section className="pack section" id="pack">
+      <div className="container">
+        <Label number="06">SEASONAL GUIDE & PACKING</Label>
 
         <div className="section-heading">
           <h2>
-            Pack light.
+            When to visit.
             <br />
-            <em>Walk far.</em>
+            <em>What to pack.</em>
           </h2>
 
           <p>
-            Japan rewards comfortable
-            shoes and a bag you can carry
-            all day.
+            Field-tested advice, seasonal clothing recommendations, and essentials for every month in Japan.
           </p>
         </div>
 
-        <div className="pack-layout">
-          <div className="pack-list">
-            {PACK.map((item, index) => (
-              <motion.div
-                key={item}
-                whileHover={{
-                  x: 8,
-                }}
-              >
-                <span>
-                  0{index + 1}
-                </span>
+        {/* MONTH SELECTOR BAR */}
+        <div className="month-selector-bar">
+          {MONTHS.map((month) => (
+            <button
+              key={month}
+              type="button"
+              onClick={() => setSelectedMonth(month)}
+              className={`month-pill ${selectedMonth === month ? "active" : ""}`}
+            >
+              {month}
+            </button>
+          ))}
+        </div>
 
-                <strong>{item}</strong>
-
-                <i>+</i>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="bag-area">
-            <div className="bag-handle" />
-
-            <div className="bag">
-              旅
+        {/* 3 MONTHLY STAT CARDS */}
+        <div className="month-stats-grid">
+          {/* WEATHER CARD */}
+          <div className="month-stat-card weather-card">
+            <div className="stat-card-header">
+              <span className="stat-label">WEATHER</span>
+              <span className="weather-season-tag">{currentGuide.weatherTag}</span>
+            </div>
+            
+            <div className="city-temps-container">
+              <div className="city-temp-box">
+                <span className="city-tag">TOKYO</span>
+                <span className="temp-num">{currentGuide.tokyoTemp}</span>
+              </div>
+              <div className="city-temp-box">
+                <span className="city-tag">KYOTO</span>
+                <span className="temp-num">{currentGuide.kyotoTemp}</span>
+              </div>
             </div>
 
-            <span className="note note-a">
-              PASSPORT
-            </span>
+            <div className="stat-footer-info">
+              {currentGuide.feelsLike && (
+                <span className="feels-badge">{currentGuide.feelsLike}</span>
+              )}
+              <p className="stat-desc">{currentGuide.weatherDesc}</p>
+            </div>
+          </div>
 
-            <span className="note note-b">
-              CAMERA
-            </span>
+          {/* CROWDS CARD */}
+          <div className="month-stat-card crowds-card">
+            <div className="stat-card-header">
+              <span className="stat-label">CROWDS</span>
+              <span className="crowd-badge">{currentGuide.crowdsLevel}</span>
+            </div>
 
-            <span className="note note-c">
-              COMFORT
-            </span>
+            <div className="stat-main-highlight">
+              <h4>{currentGuide.crowdsLevel} DENSITY</h4>
+            </div>
+
+            <div className="stat-footer-info">
+              <p className="stat-desc">{currentGuide.crowdsDesc}</p>
+            </div>
+          </div>
+
+          {/* COST CARD */}
+          <div className="month-stat-card cost-card">
+            <div className="stat-card-header">
+              <span className="stat-label">COST &amp; BUDGET</span>
+              <span className="cost-badge">{currentGuide.costLevel}</span>
+            </div>
+
+            <div className="stat-main-highlight">
+              <h4>{currentGuide.costLevel} RATES</h4>
+            </div>
+
+            <div className="stat-footer-info">
+              <p className="stat-desc">{currentGuide.costDesc}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 3 MAIN CATEGORY CARDS */}
+        <div className="pack-categories-grid">
+          {/* ESSENTIALS */}
+          <div className="pack-card">
+            <h3>
+              Essentials<span className="title-dot">.</span>
+            </h3>
+            <ul className="pack-bullet-list">
+              <li>Comfortable broken-in walking shoes (15,000–25,000 steps daily, easy to remove)</li>
+              <li>Compact umbrella (rain possible any month)</li>
+              <li>Power bank 10,000+ mAh (phone is maps, translation, tickets)</li>
+              <li>Small backpack (hands-free for trains)</li>
+              <li>Tissues (restrooms often lack paper)</li>
+              <li>Ziplock bags</li>
+              <li>Prescription medications</li>
+            </ul>
+          </div>
+
+          {/* TECH */}
+          <div className="pack-card">
+            <h3>
+              Tech<span className="title-dot">.</span>
+            </h3>
+            <ul className="pack-bullet-list">
+              <li>Unlocked phone</li>
+              <li>Power bank</li>
+              <li>Headphones</li>
+              <li>Type A/B power adapter</li>
+              <li>eSIM activated before arrival</li>
+            </ul>
+          </div>
+
+          {/* CLOTHING */}
+          <div className="pack-card">
+            <h3>
+              Clothing<span className="title-dot">.</span>
+            </h3>
+            <ul className="pack-bullet-list">
+              <li>Layers beat bulky items</li>
+              <li>Quick-dry fabrics, neutral colors</li>
+              <li>Pack light — coin laundry is everywhere</li>
+              <li>Hotels provide basic toiletries; drugstores sell everything cheap</li>
+              <li>Winter (Dec–Feb): warm coat, thermal layers, gloves/scarf/beanie, warm socks</li>
+              <li>Spring (Mar–May): light jacket or cardigan, long sleeves, umbrella, walking shoes</li>
+              <li>Summer (Jun–Aug): breathable cotton/linen, waterproof rain jacket (Jun), hand towel, portable fan</li>
+              <li>Autumn (Sep–Nov): layers, medium jacket, scarf and light gloves by late November</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* BEST MONTHS FULL-WIDTH SYMMETRICAL BANNER CARD */}
+        <div className="pack-card best-months-banner">
+          <h3>
+            Best Months<span className="title-dot">.</span>
+          </h3>
+          <div className="best-months-grid">
+            <div className="best-month-item">
+              <span className="sub-label">BEST WEATHER</span>
+              <p>May &amp; October — perfect temperatures, low rainfall, clear skies</p>
+            </div>
+            <div className="best-month-item">
+              <span className="sub-label">CHERRY BLOSSOM</span>
+              <p>Late March to early April</p>
+            </div>
+            <div className="best-month-item">
+              <span className="sub-label">AUTUMN FOLIAGE</span>
+              <p>November to early December</p>
+            </div>
           </div>
         </div>
       </div>
@@ -5883,36 +6139,276 @@ export default function JapanPage() {
         }
 
         /* =================================================
-           PACK
+           MONTHLY GUIDE & PACKING
         ================================================= */
 
-        .pack {
-          padding:
-            120px 32px;
-
-          background:
-            #ded2bf;
+        .month-selector-bar {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          padding: 8px 4px 16px 4px;
+          margin: 36px 0 32px 0;
+          scrollbar-width: none;
         }
 
-        .pack-paper {
-          width:
-            min(
-              1180px,
-              100%
-            );
+        .month-selector-bar::-webkit-scrollbar {
+          display: none;
+        }
 
-          margin:
-            auto;
+        .month-pill {
+          padding: 10px 24px;
+          border-radius: 999px;
+          font-family: var(--font-mono), monospace;
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.1em;
+          border: 1px solid rgba(54, 43, 33, 0.14);
+          background: rgba(240, 234, 225, 0.5);
+          color: #4a3e35;
+          cursor: pointer;
+          transition: all 0.25s ease;
+          white-space: nowrap;
+        }
 
-          padding:
-            85px;
+        .month-pill:hover {
+          background: rgba(230, 222, 210, 0.85);
+          border-color: rgba(159, 60, 48, 0.3);
+        }
 
-          background:
-            #efe5d4;
+        .month-pill.active {
+          background: #9f3c30;
+          border-color: #9f3c30;
+          color: #ffffff;
+          box-shadow: 0 4px 14px rgba(159, 60, 48, 0.3);
+        }
 
-          box-shadow:
-            0 25px 70px
-            rgba(51,38,26,.1);
+        .month-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+          margin-bottom: 36px;
+        }
+
+        .month-stat-card {
+          background: rgba(238, 232, 223, 0.75);
+          border-radius: 20px;
+          padding: 24px 28px;
+          border: 1px solid rgba(54, 43, 33, 0.08);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .month-stat-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(54, 43, 33, 0.07);
+        }
+
+        .stat-card-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+
+        .month-stat-card .stat-label {
+          font-family: var(--font-mono), monospace;
+          font-size: 10px;
+          color: #9f3c30;
+          letter-spacing: 0.15em;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+
+        .weather-season-tag,
+        .crowd-badge,
+        .cost-badge {
+          font-family: var(--font-mono), monospace;
+          font-size: 9px;
+          letter-spacing: 0.1em;
+          padding: 3px 10px;
+          border-radius: 999px;
+          background: rgba(159, 60, 48, 0.1);
+          color: #9f3c30;
+          font-weight: 600;
+        }
+
+        .city-temps-container {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+
+        .city-temp-box {
+          flex: 1;
+          background: rgba(255, 255, 255, 0.45);
+          padding: 10px 14px;
+          border-radius: 12px;
+          border: 1px solid rgba(54, 43, 33, 0.06);
+          display: flex;
+          flex-direction: column;
+        }
+
+        .city-tag {
+          font-family: var(--font-mono), monospace;
+          font-size: 9px;
+          color: #776b5e;
+          letter-spacing: 0.12em;
+          margin-bottom: 4px;
+        }
+
+        .temp-num {
+          font-size: 16px;
+          font-weight: 700;
+          color: #231c18;
+        }
+
+        .stat-main-highlight {
+          margin: 12px 0 16px 0;
+        }
+
+        .stat-main-highlight h4 {
+          font-size: 20px;
+          font-weight: 700;
+          color: #231c18;
+          margin: 0;
+          letter-spacing: -0.01em;
+        }
+
+        .stat-footer-info {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .feels-badge {
+          display: inline-block;
+          font-family: var(--font-mono), monospace;
+          font-size: 9.5px;
+          font-weight: 600;
+          color: #9f3c30;
+          letter-spacing: 0.05em;
+        }
+
+        .stat-desc {
+          margin: 0;
+          font-size: 13.5px;
+          color: #4a3e35;
+          line-height: 1.45;
+        }
+
+        .pack-categories-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+          margin-bottom: 28px;
+        }
+
+        .pack-card {
+          background: rgba(238, 232, 223, 0.75);
+          border-radius: 24px;
+          padding: 36px 32px;
+          border: 1px solid rgba(54, 43, 33, 0.08);
+          display: flex;
+          flex-direction: column;
+        }
+
+        .pack-card h3 {
+          font-size: 26px;
+          font-weight: 700;
+          color: #231c18;
+          margin: 0 0 24px 0;
+          display: flex;
+          align-items: baseline;
+        }
+
+        .title-dot {
+          color: #9f3c30;
+          font-size: 30px;
+          margin-left: 2px;
+        }
+
+        .pack-bullet-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .pack-bullet-list li {
+          position: relative;
+          padding-left: 20px;
+          margin-bottom: 14px;
+          font-size: 14px;
+          line-height: 1.55;
+          color: #3d332c;
+        }
+
+        .pack-bullet-list li::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 8px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #9f3c30;
+        }
+
+        .best-months-banner {
+          width: 100%;
+          margin-top: 24px;
+        }
+
+        .best-months-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+        }
+
+        .best-month-item {
+          position: relative;
+          padding-left: 20px;
+        }
+
+        .best-month-item::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 6px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #9f3c30;
+        }
+
+        .best-month-item .sub-label {
+          display: block;
+          font-family: var(--font-mono), monospace;
+          font-size: 10px;
+          letter-spacing: 0.14em;
+          color: #9f3c30;
+          font-weight: 600;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+        }
+
+        .best-month-item p {
+          margin: 0;
+          font-size: 14px;
+          color: #3d332c;
+          line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+          .month-stats-grid,
+          .pack-categories-grid,
+          .best-months-row {
+            grid-template-columns: 1fr;
+          }
+          .best-months-card {
+            grid-column: span 1;
+          }
         }
 
         .pack-layout {
